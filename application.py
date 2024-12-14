@@ -53,7 +53,7 @@ class ExpenseTracker(QMainWindow):
 
     def create_expense_table(self):
         self.expense_table = QTableWidget(0, 2, self)
-        self.expense_table.setHorizontalHeaderLabels(["Description", "Amount"])
+        self.expense_table.setHorizontalHeaderLabels(["Product", "Amount"])
         self.expense_table.horizontalHeader().setStretchLastSection(True)
         self.layout.addWidget(self.expense_table)
 
@@ -62,7 +62,7 @@ class ExpenseTracker(QMainWindow):
         amount_text = self.amount_input.text()
 
         if not description or not amount_text:
-            return  # Don't add empty entries
+            return  # You cant an add empty entry
 
         try:
             amount = float(amount_text)
@@ -79,7 +79,7 @@ class ExpenseTracker(QMainWindow):
 
         # Update total amount
         self.expenses.append((description, amount))
-        self.total_amount = amount + 200
+        self.total_amount = amount
         self.total_label.setText(f"Total: ${self.total_amount:.2f}")
 
         # Clear input fields
