@@ -1,4 +1,6 @@
 import sys
+import SavedData
+import json
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget,
     QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QComboBox,
@@ -151,6 +153,16 @@ class ExpenseTracker(QMainWindow):
         amount_text = self.amount_input.text()
         category = self.category_input.currentText()
 
+        userData = {
+        "description" : "none",
+    "amount": 0
+}
+
+        userData["amount"] = amount_text
+        userData["description"] = description
+        with open("expenses.json", "w") as file:
+            json.dump(userData, file)
+
         if not description or not amount_text:
             self.amount_input.setPlaceholderText("All fields are required!")
             return
@@ -210,3 +222,40 @@ if __name__ == "__main__":
     window = ExpenseTracker()
     window.show()
     sys.exit(app.exec_())
+
+import json
+
+# Load configuration from JSON file
+def load_config(json_file):
+    try:
+        with open(json_file, 'r') as file:
+            config = json.load(file)
+        return config
+    except Exception as e:
+        print(f"Error loading JSON configuration: {e}")
+        return None
+
+# Function to write information into a text file
+def save_to_file(file_name, data):
+    try:
+        with open(file_name, 'a') as file:  # Open in append mode
+            file.write(data + '\n')  # Write the data with a newline
+        print(f"Data successfully saved to {file_name}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Main program
+if __name__ == "__main__":
+    config = load_config('config.json')  # Load the configuration
+    if config is None:
+        print("Configuration could not be loaded. Exiting...")
+    else:
+        file_name = config.get("file_name", "default.txt")  # Get the file name from the config
+        while True:
+            user_input = input("Enter information to save (type 'exit' to quit): ")
+            
+            if user_input.lower() == 'exit':
+                print("Exiting the program. Goodbye!")
+                break
+            
+            save_to_file(file_name, user_input)
