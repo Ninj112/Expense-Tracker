@@ -1,5 +1,4 @@
 import sys
-import SavedData
 import json
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget,
@@ -8,7 +7,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-
 
 class ExpenseTracker(QMainWindow):
     def __init__(self):
@@ -24,7 +22,8 @@ class ExpenseTracker(QMainWindow):
         self.layout = QVBoxLayout(self.central_widget)
 
         # Total amount display
-        self.total_label = QLabel("Total: $0.00")
+        self.total_currency = "$"  # Default currency
+        self.total_label = QLabel(f"Total: {self.total_currency}0.00")
         self.total_label.setAlignment(Qt.AlignCenter)
         total_font = QFont("Times New Roman", 18, QFont.Bold)
         total_font.setItalic(True)
@@ -79,6 +78,22 @@ class ExpenseTracker(QMainWindow):
         """)
         input_layout.addWidget(self.amount_input, 0, 2, 1, 2)
 
+        # Currency selection
+        self.currency_input = QComboBox()
+        self.currency_input.addItems(["Dollar ($)", "Euro (€)", "Egyptian Pound (£)"])
+        self.currency_input.setFont(QFont("Arial", 14))
+        self.currency_input.setStyleSheet("""
+            QComboBox {
+                border: 2px solid #87CEEB;  /* Sky Blue */
+                border-radius: 10px;
+                padding: 8px;
+                font-size: 14px;
+                background-color: #E0FFFF;  /* Light Cyan */
+            }
+        """)
+        self.currency_input.currentTextChanged.connect(self.update_currency)
+        input_layout.addWidget(self.currency_input, 0, 4, 1, 2)
+
         # Category selection
         self.category_input = QComboBox()
         self.category_input.addItems(["Select...","Food", "Transportation", "Entertainment", "Bills", "Other"])
@@ -92,7 +107,7 @@ class ExpenseTracker(QMainWindow):
                 background-color: #E0FFFF;  /* Light Cyan */
             }
         """)
-        input_layout.addWidget(self.category_input, 0, 4, 1, 2)
+        input_layout.addWidget(self.category_input, 0, 6, 1, 2)
 
         # Add button
         self.add_button = QPushButton("Add Expense")
@@ -110,7 +125,7 @@ class ExpenseTracker(QMainWindow):
             }
         """)
         self.add_button.clicked.connect(self.add_expense)
-        input_layout.addWidget(self.add_button, 0, 6, 1, 1)
+        input_layout.addWidget(self.add_button, 0, 8, 1, 1)
 
         self.layout.addLayout(input_layout)
 
@@ -148,20 +163,31 @@ class ExpenseTracker(QMainWindow):
 
         self.layout.addWidget(self.expense_table)
 
+    def update_currency(self, currency_text):
+        if "Dollar" in currency_text:
+            self.total_currency = "$"
+        elif "Euro" in currency_text:
+            self.total_currency = "€"
+        elif "Egyptian Pound" in currency_text:
+            self.total_currency = "£"
+        self.total_label.setText(f"Total: {self.total_currency}{self.total_amount:.2f}")
+
     def add_expense(self):
         description = self.description_input.text()
         amount_text = self.amount_input.text()
         category = self.category_input.currentText()
 
-        userData = {
-        "description" : "none",
-    "amount": 0
-}
-
-        userData["amount"] = amount_text
-        userData["description"] = description
-        with open("expenses.json", "w") as file:
-            json.dump(userData, file)
+        if category == "Select...":
+            self.category_input.setStyleSheet("""
+                QComboBox {
+                    border: 2px solid red;  /* Highlight in red */
+                    border-radius: 10px;
+                    padding: 8px;
+                    font-size: 14px;
+                    background-color: #E0FFFF;  /* Light Cyan */
+                }
+            """)
+            return
 
         if not description or not amount_text:
             self.amount_input.setPlaceholderText("All fields are required!")
@@ -178,7 +204,7 @@ class ExpenseTracker(QMainWindow):
         row_position = self.expense_table.rowCount()
         self.expense_table.insertRow(row_position)
         self.expense_table.setItem(row_position, 0, QTableWidgetItem(description))
-        self.expense_table.setItem(row_position, 1, QTableWidgetItem(f"${amount:.2f}"))
+        self.expense_table.setItem(row_position, 1, QTableWidgetItem(f"{self.total_currency}{amount:.2f}"))
         self.expense_table.setItem(row_position, 2, QTableWidgetItem(category))
 
         # Remove button
@@ -201,7 +227,7 @@ class ExpenseTracker(QMainWindow):
         # Update total amount
         self.expenses.append((description, amount, category))
         self.total_amount += amount
-        self.total_label.setText(f"Total: ${self.total_amount:.2f}")
+        self.total_label.setText(f"Total: {self.total_currency}{self.total_amount:.2f}")
 
         # Clear input fields
         self.description_input.clear()
@@ -210,52 +236,14 @@ class ExpenseTracker(QMainWindow):
     def remove_expense(self, row):
         # Adjust for dynamic row deletion
         amount_text = self.expense_table.item(row, 1).text()
-        amount = float(amount_text.replace("$", ""))
+        amount = float(amount_text[1:])  # Skip currency symbol
 
         self.expense_table.removeRow(row)
         self.total_amount -= amount
-        self.total_label.setText(f"Total: ${self.total_amount:.2f}")
-
+        self.total_label.setText(f"Total: {self.total_currency}{self.total_amount:.2f}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = ExpenseTracker()
     window.show()
     sys.exit(app.exec_())
-
-import json
-
-# Load configuration from JSON file
-def load_config(json_file):
-    try:
-        with open(json_file, 'r') as file:
-            config = json.load(file)
-        return config
-    except Exception as e:
-        print(f"Error loading JSON configuration: {e}")
-        return None
-
-# Function to write information into a text file
-def save_to_file(file_name, data):
-    try:
-        with open(file_name, 'a') as file:  # Open in append mode
-            file.write(data + '\n')  # Write the data with a newline
-        print(f"Data successfully saved to {file_name}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-# Main program
-if __name__ == "__main__":
-    config = load_config('config.json')  # Load the configuration
-    if config is None:
-        print("Configuration could not be loaded. Exiting...")
-    else:
-        file_name = config.get("file_name", "default.txt")  # Get the file name from the config
-        while True:
-            user_input = input("Enter information to save (type 'exit' to quit): ")
-            
-            if user_input.lower() == 'exit':
-                print("Exiting the program. Goodbye!")
-                break
-            
-            save_to_file(file_name, user_input)
