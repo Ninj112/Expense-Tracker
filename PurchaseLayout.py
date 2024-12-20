@@ -1,5 +1,6 @@
-
+import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
+from sympy.integrals.meijerint_doc import category
 
 
 class Ui_MainWindow(object):
@@ -243,6 +244,8 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         font.setBold(True)
         font.setWeight(75)
+
+        # Done Button
         self.DoneButton.setFont(font)
         self.DoneButton.setStyleSheet("QPushButton {\n"
 "    border-radius:3px;\n"
@@ -257,6 +260,8 @@ class Ui_MainWindow(object):
 "")
         self.DoneButton.setFlat(False)
         self.DoneButton.setObjectName("DoneButton")
+        self.DoneButton.clicked.connect(self.addPurchase)
+
         self.ButtonLayout.addWidget(self.DoneButton)
         self.verticalLayout.addLayout(self.ButtonLayout)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -294,7 +299,15 @@ class Ui_MainWindow(object):
         self.TimeTitle.setText(_translate("MainWindow", "Time"))
         self.DoneButton.setText(_translate("MainWindow", "Done"))
 
-
+    def addPurchase(self):
+        itemName = self.ItemInputBox.text()
+        category = self.CategoryBox.currentText()
+        price = self.PriceBox.text()
+        date = self.DateBox.date().toString("yyyy-MM-dd")
+        time = self.TimeBox.time().toString("hh:mm")
+        purchaseList = [itemName, category, price, date, time]
+        SavedData.append_data(purchaseList)
+        print(SavedData.load_data())
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
