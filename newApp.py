@@ -7,13 +7,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from datetime import datetime
 from collections import defaultdict
+from PurchaseLayout import Ui_MainWindow
 
-# Ensure PurchaseLayout is available
-try:
-    from PurchaseLayout import Ui_MainWindow
-except ImportError:
-    print("Error: PurchaseLayout module not found. Ensure that it is in the same directory as this script.")
-    sys.exit(1)
 
 
 class ExpenseTracker(QMainWindow):
@@ -60,7 +55,7 @@ class ExpenseTracker(QMainWindow):
     def create_currency_section(self):
         # Currency selector
         self.currency_selector = QComboBox()
-        self.currency_selector.addItems(["USD ($)", "EUR (€)", "EGP (£)"])  # Add options for currencies
+        self.currency_selector.addItems(["USD ($)", "EUR (€)", "EGP (£)", "SAR (رس)"])  # Add options for currencies
         self.currency_selector.setFont(QFont("Arial", 14))
         self.currency_selector.setStyleSheet("""
             QComboBox {
@@ -171,6 +166,8 @@ class ExpenseTracker(QMainWindow):
             self.currency_symbol = "\u20ac"
         elif "EGP" in currency_text:
             self.currency_symbol = "\u00a3"
+        elif "SAR" in currency_text:
+            self.currency_symbol = "رس"
 
         self.total_label.setText(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
 

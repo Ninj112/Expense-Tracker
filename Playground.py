@@ -4,13 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from datetime import datetime
 from collections import defaultdict
+from PurchaseLayout import Ui_MainWindow
 
-# Ensure PurchaseLayout is available
-try:
-    from PurchaseLayout import Ui_MainWindow
-except ImportError:
-    print("Error: PurchaseLayout module not found. Ensure that it is in the same directory as this script.")
-    sys.exit(1)
 
 
 class ExpenseTracker(QMainWindow):

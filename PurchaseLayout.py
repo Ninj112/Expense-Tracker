@@ -2,7 +2,6 @@ import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -308,6 +307,7 @@ class Ui_MainWindow(object):
         purchaseList = [itemName, category, price, date, time]
         SavedData.append_data(purchaseList)
         print(SavedData.load_data())
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

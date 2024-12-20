@@ -242,8 +242,43 @@ class ExpenseTracker(QMainWindow):
         self.total_amount -= amount
         self.total_label.setText(f"Total: {self.total_currency}{self.total_amount:.2f}")
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = ExpenseTracker()
-    window.show()
-    sys.exit(app.exec_())
+def add_expense(self):
+        description = self.description_input.text()
+        amount_text = self.amount_input.text()
+        category = self.category_input.currentText()
+
+        if category == "Select...":
+            self.category_input.setStyleSheet("""
+                QComboBox {
+                    border: 2px solid red;  /* Highlight in red */
+                    border-radius: 10px;
+                    padding: 8px;
+                    font-size: 14px;
+                    background-color: #E0FFFF;  /* Light Cyan */
+                }
+            """)
+            return
+
+        if not description or not amount_text:
+            self.amount_input.setPlaceholderText("All fields are required!")
+            return
+
+        try:
+            amount = float(amount_text)
+        except ValueError:
+            self.amount_input.clear()
+            self.amount_input.setPlaceholderText("Enter a valid number")
+            return
+
+        # Add expense to the table
+        row_position = self.expense_table.rowCount()
+        self.expense_table.insertRow(row_position)
+        self.expense_table.setItem(row_position, 0, QTableWidgetItem(description))
+        self.expense_table.setItem(row_position, 1, QTableWidgetItem(f"{self.total_currency}{amount:.2f}"))
+        self.expense_table.setItem(row_position, 2, QTableWidgetItem(category))
+
+        if __name__ == "__main__":
+            app = QApplication(sys.argv)
+            window = ExpenseTracker()
+            window.show()
+            sys.exit(app.exec_())
