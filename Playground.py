@@ -226,10 +226,12 @@ class ExpenseTracker(QMainWindow):
         # Fetch data for the report page
         current_month_total, highest_day, last_month_total = self.calculate_report_data()
 
-        # Open report window
-        self.report_window = ReportPage(current_month_total, highest_day, last_month_total, self.expenses)
+        # Open report window and pass self as the main window
+        self.report_window = ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
         self.report_window.show()
         self.hide()  # Hide the current window (Expense Tracker) when opening the report page
+
+
 
     def update_currency(self):
         # Update currency symbol and total display
@@ -286,10 +288,13 @@ class ExpenseTracker(QMainWindow):
 
 
 class ReportPage(QMainWindow):
-    def __init__(self, current_month_spent, highest_day, last_month_spent, expenses):
+    def __init__(self, current_month_spent, highest_day, last_month_spent, expenses, currency_symbol, main_window):
         super().__init__()
 
         self.expenses = expenses
+        self.currency_symbol = currency_symbol
+        self.main_window = main_window  # Reference to the main window
+
         self.setWindowTitle("Expense Report")
         self.setGeometry(100, 100, 800, 600)
 
@@ -329,6 +334,29 @@ class ReportPage(QMainWindow):
         """)
         self.download_button.clicked.connect(self.download_report)
         self.layout.addWidget(self.download_button)
+
+        # Add Return to Tracker button
+        self.return_button = QPushButton("Return to Tracker")
+        self.return_button.setFont(QFont("Arial", 14))
+        self.return_button.setStyleSheet("""
+            QPushButton {
+                background-color: #4682B4;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            QPushButton:hover {
+                background-color: #5F9EA0;
+            }
+        """)
+        self.return_button.clicked.connect(self.return_to_tracker)
+        self.layout.addWidget(self.return_button)
+
+    def return_to_tracker(self):
+        self.main_window.show()  # Show the ExpenseTracker window
+        self.close()  # Close the ReportPage
+
 
     def download_report(self):
         # Generate and download a report as JSON
