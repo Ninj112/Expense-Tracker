@@ -1,9 +1,16 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QComboBox, QGridLayout, QHeaderView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QComboBox, QHeaderView
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from datetime import datetime
 from collections import defaultdict
+
+# Ensure PurchaseLayout is available
+try:
+    from PurchaseLayout import Ui_MainWindow
+except ImportError:
+    print("Error: PurchaseLayout module not found. Ensure that it is in the same directory as this script.")
+    sys.exit(1)
 
 
 class ExpenseTracker(QMainWindow):
@@ -96,107 +103,33 @@ class ExpenseTracker(QMainWindow):
         self.layout.addWidget(self.expense_table)
 
     def create_add_expense_section(self):
-        input_layout = QGridLayout()
-
-        # Description input
-        self.description_input = QLineEdit()
-        self.description_input.setPlaceholderText("Enter description")
-        self.description_input.setFont(QFont("Arial", 14))
-        self.description_input.setStyleSheet("""
-            QLineEdit {
-                border: 2px solid #87CEEB;
-                border-radius: 10px;
-                padding: 8px;
-                font-size: 14px;
-                background-color: #E0FFFF;
-            }
-        """)
-        input_layout.addWidget(self.description_input, 0, 0, 1, 2)
-
-        # Amount input
-        self.amount_input = QLineEdit()
-        self.amount_input.setPlaceholderText("Enter amount")
-        self.amount_input.setFont(QFont("Arial", 14))
-        self.amount_input.setStyleSheet("""
-            QLineEdit {
-                border: 2px solid #87CEEB;
-                border-radius: 10px;
-                padding: 8px;
-                font-size: 14px;
-                background-color: #E0FFFF;
-            }
-        """)
-        input_layout.addWidget(self.amount_input, 0, 2, 1, 2)
-
-        # Category selection
-        self.category_input = QComboBox()
-        self.category_input.addItems(["Select...", "Food", "Transportation", "Entertainment", "Bills", "Other"])
-        self.category_input.setFont(QFont("Arial", 14))
-        self.category_input.setStyleSheet("""
-            QComboBox {
-                border: 2px solid #87CEEB;
-                border-radius: 10px;
-                padding: 8px;
-                font-size: 14px;
-                background-color: #E0FFFF;
-            }
-        """)
-        input_layout.addWidget(self.category_input, 0, 4, 1, 2)
-
-        # Add button
+        # Add button only
         self.add_button = QPushButton("Add Expense")
-        self.add_button.setFont(QFont("Arial", 14))
+        self.add_button.setFont(QFont("Arial", 18, QFont.Bold))  # Larger font for emphasis
         self.add_button.setStyleSheet("""
             QPushButton {
                 background-color: #4682B4;
                 color: white;
                 border: none;
                 border-radius: 10px;
-                padding: 10px;
+                padding: 15px;
+                font-size: 18px;
             }
             QPushButton:hover {
                 background-color: #5F9EA0;
             }
         """)
-        self.add_button.clicked.connect(self.add_expense)
-        input_layout.addWidget(self.add_button, 0, 6, 1, 1)
+        self.add_button.setMinimumHeight(60)  # Increase button height
+        self.add_button.clicked.connect(self.openExpenseAdd)  # Placeholder functionality
+        self.layout.addWidget(self.add_button)
 
-        self.layout.addLayout(input_layout)
-
-    def add_expense(self):
-        description = self.description_input.text()
-        amount_text = self.amount_input.text()
-        category = self.category_input.currentText()
-
-        if not description or not amount_text or category == "Select...":
-            self.amount_input.setPlaceholderText("All fields are required!")
-            return
-
-        try:
-            amount = float(amount_text)
-        except ValueError:
-            self.amount_input.clear()
-            self.amount_input.setPlaceholderText("Enter a valid number")
-            return
-
-        # Get the current date
-        current_date = datetime.now().strftime("%Y-%m-%d")
-
-        # Add expense to the table
-        row_position = self.expense_table.rowCount()
-        self.expense_table.insertRow(row_position)
-        self.expense_table.setItem(row_position, 0, QTableWidgetItem(description))
-        self.expense_table.setItem(row_position, 1, QTableWidgetItem(f"{self.currency_symbol}{amount:.2f}"))
-        self.expense_table.setItem(row_position, 2, QTableWidgetItem(category))
-
-        # Store expense in the list with the date
-        self.expenses.append((description, amount, category, current_date))
-        self.total_amount += amount
-        self.total_label.setText(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
-
-        # Clear input fields
-        self.description_input.clear()
-        self.amount_input.clear()
+    def openExpenseAdd(self):
+        # Open the purchase layout
+        self.purchase = QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.purchase)
+        self.purchase.show()
+        self.hide()
 
     def create_view_report_button(self):
         # Create button to open the report page
@@ -227,6 +160,7 @@ class ExpenseTracker(QMainWindow):
         self.hide()  # Hide the current window (Expense Tracker) when opening the report page
 
     def update_currency(self):
+        # Update currency symbol and total display
         currency_text = self.currency_selector.currentText()
         if "USD" in currency_text:
             self.currency_symbol = "$"
@@ -235,7 +169,6 @@ class ExpenseTracker(QMainWindow):
         elif "EGP" in currency_text:
             self.currency_symbol = "\u00a3"
 
-        # Update total label with new currency symbol
         self.total_label.setText(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
 
     def calculate_report_data(self):
@@ -247,11 +180,7 @@ class ExpenseTracker(QMainWindow):
         for _, amount, _, date in self.expenses:
             daily_totals[date] += amount
 
-        if daily_totals:
-            highest_day = max(daily_totals, key=daily_totals.get)
-        else:
-            highest_day = "N/A"  # Handle case where no expenses exist
-
+        highest_day = max(daily_totals, key=daily_totals.get, default="N/A")
         return current_month_total, highest_day, last_month_total
 
 
