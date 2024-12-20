@@ -185,7 +185,7 @@ class ExpenseTracker(QMainWindow):
 
 
 class ReportPage(QMainWindow):
-    def __init__(self, current_month_spent, highest_day, last_month_spent, expenses):
+    def __init__(self, current_month_spent, highest_day, expenses, download_button):
         super().__init__()
 
         self.expenses = expenses
