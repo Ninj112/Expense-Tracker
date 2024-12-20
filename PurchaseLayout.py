@@ -303,9 +303,10 @@ class Ui_MainWindow(object):
         itemName = self.ItemInputBox.text()
         category = self.CategoryBox.currentText()
         price = self.PriceBox.text()
+        price = float(price)
         date = self.DateBox.date().toString("yyyy-MM-dd")
         time = self.TimeBox.time().toString("hh:mm")
-        purchaseList = [itemName, category, price, date, time]
+        purchaseList = [itemName, price, category, date, time]
         SavedData.append_data(purchaseList)
         print(SavedData.load_data())
 if __name__ == "__main__":

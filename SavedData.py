@@ -32,10 +32,13 @@ if __name__ == "__main__":
     data = load_data()
     print("Current Data:", data)
 
-    # Example of appending a new array
-    new_array = [1, 2, 3, 4]
-    append_data(new_array)
+    # # Example of appending a new array
+    # new_array = [1, 2, 3, 4]
+    # append_data(new_array)
+    #
+    # # Verify data after appending
+    # updated_data = load_data()
+    # print("Updated Data:", updated_data)
 
-    # Verify data after appending
-    updated_data = load_data()
-    print("Updated Data:", updated_data)
+    # array = []
+    # save_data(array)

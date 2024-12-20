@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLa
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
+import SavedData
+
 
 class ExpenseTracker(QMainWindow):
     def __init__(self):
@@ -30,6 +32,13 @@ class ExpenseTracker(QMainWindow):
         # Initialize expense data
         self.expenses = []  # Store expenses as tuples (description, amount, category, date)
         self.total_amount = 0.0
+        self.loadExpenses()
+
+    def loadExpenses(self):
+        ExpensesArray = SavedData.load_data()
+        for array in ExpensesArray:
+            self.add_loaded_expense(array[0], array[1], array[2])
+
 
     def create_total_section(self):
         # Total spend label
@@ -160,6 +169,20 @@ class ExpenseTracker(QMainWindow):
         input_layout.addWidget(self.add_button, 0, 6, 1, 1)
 
         self.layout.addLayout(input_layout)
+
+    def add_loaded_expense(self, description, amount, category):
+        amount = float(amount)
+        # Add expense to the table
+        row_position = self.expense_table.rowCount()
+        self.expense_table.insertRow(row_position)
+        self.expense_table.setItem(row_position, 0, QTableWidgetItem(description))
+        self.expense_table.setItem(row_position, 1, QTableWidgetItem(f"{self.currency_symbol}{amount:.2f}"))
+        self.expense_table.setItem(row_position, 2, QTableWidgetItem(category))
+
+        # Update total amount
+        self.expenses.append((description, amount, category))
+        self.total_amount += amount
+        self.total_label.setText(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
 
     def add_expense(self):
         description = self.description_input.text()
