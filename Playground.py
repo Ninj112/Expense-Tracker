@@ -1,5 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QComboBox, QHeaderView
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget,
+    QTableWidgetItem, QComboBox, QHeaderView, QFileDialog
+)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from datetime import datetime
@@ -52,7 +55,7 @@ class ExpenseTracker(QMainWindow):
     def create_currency_section(self):
         # Currency selector
         self.currency_selector = QComboBox()
-        self.currency_selector.addItems(["USD ($)", "EUR (€)", "EGP (£)"])  # Add options for currencies
+        self.currency_selector.addItems(["USD ($)", "EUR (€)", "EGP (£)", "SAR (رس)"])  # Add options for currencies
         self.currency_selector.setFont(QFont("Arial", 14))
         self.currency_selector.setStyleSheet("""
             QComboBox {
@@ -150,7 +153,7 @@ class ExpenseTracker(QMainWindow):
         current_month_total, highest_day, last_month_total = self.calculate_report_data()
 
         # Open report window
-        self.report_window = ReportPage(current_month_total, highest_day, last_month_total)
+        self.report_window = ReportPage(current_month_total, highest_day, last_month_total, self.expenses)
         self.report_window.show()
         self.hide()  # Hide the current window (Expense Tracker) when opening the report page
 
@@ -163,6 +166,8 @@ class ExpenseTracker(QMainWindow):
             self.currency_symbol = "\u20ac"
         elif "EGP" in currency_text:
             self.currency_symbol = "\u00a3"
+        elif "SAR" in currency_text:
+            self.currency_symbol = "رس"
 
         self.total_label.setText(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
 
@@ -180,9 +185,10 @@ class ExpenseTracker(QMainWindow):
 
 
 class ReportPage(QMainWindow):
-    def __init__(self, current_month_spent, highest_day, last_month_spent):
+    def __init__(self, current_month_spent, highest_day, last_month_spent, expenses):
         super().__init__()
 
+        self.expenses = expenses
         self.setWindowTitle("Expense Report")
         self.setGeometry(100, 100, 800, 600)
 
@@ -201,15 +207,27 @@ class ReportPage(QMainWindow):
         self.monthly_spent_label.setFont(QFont("Arial", 18))
         self.layout.addWidget(self.monthly_spent_label)
 
-        self.compare_spent_label = QLabel(f"Last Month Spend: ${last_month_spent:.2f}")
-        self.compare_spent_label.setAlignment(Qt.AlignCenter)
-        self.compare_spent_label.setFont(QFont("Arial", 18))
-        self.layout.addWidget(self.compare_spent_label)
-
         self.highest_day_label = QLabel(f"Highest Day of Spending: {highest_day}")
         self.highest_day_label.setAlignment(Qt.AlignCenter)
         self.highest_day_label.setFont(QFont("Arial", 18))
         self.layout.addWidget(self.highest_day_label)
+
+        self.download_button = QPushButton("Download Report")
+        self.download_button.setFont(QFont("Arial", 14))
+        self.download_button.setStyleSheet("""
+            QPushButton {
+                background-color: #4682B4;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            QPushButton:hover {
+                background-color: #5F9EA0;
+            }
+        """)
+        self.download_button.clicked.connect(self.download_report)
+        self.layout.addWidget(self.download_button)
 
         self.return_button = QPushButton("Return to Tracker")
         self.return_button.setFont(QFont("Arial", 14))
@@ -228,8 +246,20 @@ class ReportPage(QMainWindow):
         self.return_button.clicked.connect(self.return_to_tracker)
         self.layout.addWidget(self.return_button)
 
+    def download_report(self):
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save Report", "", "Text Files (*.txt)")
+        if file_path:
+            with open(file_path, "w") as file:
+                file.write("Expense Report\n")
+                file.write("======================\n")
+                file.write(f"Current Month Spend: ${sum(e[1] for e in self.expenses):.2f}\n")
+                file.write(f"Highest Spending Day: {self.highest_day_label.text()}\n")
+                file.write("\nExpenses:\n")
+                for desc, amt, cat, date in self.expenses:
+                    file.write(f"- {date}: {desc} | {cat} | ${amt:.2f}\n")
+
     def return_to_tracker(self):
-        self.close()  # Close the ReportPage window
+        self.close()
         self.main_window = ExpenseTracker()
         self.main_window.show()
 
