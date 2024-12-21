@@ -1,8 +1,17 @@
 import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
+from redirect import ExpenseTracker, Ui_MainWindow
 
 class Ui_MainWindow(object):
+    def __init__(self, expense_tracker):
+        super().__init__()
+        self.expense_tracker = expense_tracker
+
+    def setupUi(self, MainWindow):
+        # Your setup code here
+        pass
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(731, 494)
@@ -297,6 +306,44 @@ class Ui_MainWindow(object):
         self.DateTitle.setText(_translate("MainWindow", "Date"))
         self.TimeTitle.setText(_translate("MainWindow", "Time"))
         self.DoneButton.setText(_translate("MainWindow", "Done"))
+        # Return Button
+        self.ReturnButton = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ReturnButton.sizePolicy().hasHeightForWidth())
+        self.ReturnButton.setSizePolicy(sizePolicy)
+        self.ReturnButton.setMinimumSize(QtCore.QSize(100, 50))
+        self.ReturnButton.setMaximumSize(QtCore.QSize(350, 200))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.ReturnButton.setFont(font)
+        self.ReturnButton.setStyleSheet("QPushButton {\n"
+                                        "    border-radius:3px;\n"
+                                        "    background-color: white;\n"
+                                        "transition: 0.3s;\n"
+                                        "}\n"
+                                        "\n"
+                                        "QPushButton:hover {\n"
+                                        "    background-color: rgb(85, 85, 255);\n"
+                                        "     color:white\n"
+                                        "}\n"
+                                        "")
+        self.ReturnButton.setFlat(False)
+        self.ReturnButton.setObjectName("ReturnButton")
+        self.ReturnButton.setText("Return")
+        self.ReturnButton.clicked.connect(self.return_to_tracker)
+
+        self.ButtonLayout.addWidget(self.ReturnButton)  # Add ReturnButton to ButtonLayout
+
+   
+    def return_to_tracker(self):
+        self.expense_tracker.show()  # Show the Expense Tracker window
+        QtWidgets.QApplication.activeWindow().close()  # Close the current Add Purchase window
+
+
 
     def addPurchase(self):
         itemName = self.ItemInputBox.text()
@@ -312,8 +359,10 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    expense_tracker = ExpenseTracker()
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Ui_MainWindow(expense_tracker)
+    ui.ExpenseTracker = expense_tracker
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
