@@ -186,7 +186,6 @@ class ExpenseTracker(QMainWindow):
 
     def remove_expense(self, row):
         del self.expenses[row]  # Remove the expense from the data source
-        self.populate_table()   # Refresh the table
 
     def refresh_table(self):
         self.expense_table.setRowCount(len(self.expenses))  # Update row count
@@ -216,6 +215,7 @@ class ExpenseTracker(QMainWindow):
         self.add_button.setMinimumHeight(60)  # Increase button height
         self.add_button.clicked.connect(self.openExpenseAdd)  # Placeholder functionality
         self.layout.addWidget(self.add_button)
+        self.close()
 
     def create_view_report_button(self):
         # Create button to open the report page

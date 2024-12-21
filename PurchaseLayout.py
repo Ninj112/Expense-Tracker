@@ -340,8 +340,9 @@ class Ui_MainWindow(object):
 
    
     def return_to_tracker(self):
-        self.expense_tracker.show()  # Show the Expense Tracker window
-        QtWidgets.QApplication.activeWindow().close()  # Close the current Add Purchase window
+        self.expense_tracker.open()  # Show the Expense Tracker window
+        QtWidgets.QApplication.activeWindow()
+        self.close()  # Close the current Add Purchase window
 
 
 
