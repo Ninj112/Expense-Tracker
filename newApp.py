@@ -1,5 +1,6 @@
 import sys
 import json
+from functools import partial
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget,
     QTableWidgetItem, QComboBox, QHeaderView, QFileDialog, QLineEdit, QHBoxLayout
@@ -146,8 +147,8 @@ class ExpenseTracker(QMainWindow):
         self.layout.addWidget(self.recent_purchases_label)
 
         # Create table for recent purchases
-        self.expense_table = QTableWidget(len(self.expenses), 3)  # 3 columns: Description, Amount, Category
-        self.expense_table.setHorizontalHeaderLabels(["Description", "Amount", "Category"])
+        self.expense_table = QTableWidget(len(self.expenses), 4)  # 3 columns: Description, Amount, Category
+        self.expense_table.setHorizontalHeaderLabels(["Description", "Amount", "Category", "Action"])
 
         # Customize headers
         self.expense_table.horizontalHeader().setStyleSheet("""
@@ -173,8 +174,23 @@ class ExpenseTracker(QMainWindow):
             self.expense_table.setItem(row, 0, QTableWidgetItem(expense['description']))
             self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense['amount'])))
             self.expense_table.setItem(row, 2, QTableWidgetItem(expense['category']))
-
+            
+            remove_button = QPushButton("Remove")
+    # Connect the button to a method, passing the row index
+            remove_button.clicked.connect(partial(self.remove_expense, row))
         self.layout.addWidget(self.expense_table)
+
+    def remove_expense(self, row):
+        del self.expenses[row]  # Remove the expense from the data source
+        self.populate_table()   # Refresh the table
+
+    def refresh_table(self):
+        self.expense_table.setRowCount(len(self.expenses))  # Update row count
+        for row, expense in enumerate(self.expenses):
+            self.expense_table.setItem(row, 0, QTableWidgetItem(expense['description']))
+            self.expense_table.setItem(row, 1, QTableWidgetItem(f"{self.currency_symbol}{expense['amount']:.2f}"))
+            self.expense_table.setItem(row, 2, QTableWidgetItem(expense['category']))
+
 
     def create_add_expense_section(self):
         # Add button only
@@ -361,16 +377,28 @@ class ReportPage(QMainWindow):
 
 
     def download_report(self):
-        # Generate and download a report as JSON
-        file_name, _ = QFileDialog.getSaveFileName(self, "Save Report", "", "JSON Files (*.json)")
+    # Generate and download a report as plain text
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save Report", "", "Text Files (*.txt)")
         if file_name:
-            report_data = {
-                "Current Month Spend": self.monthly_spent_label.text(),
-                "Highest Day of Spending": self.highest_day_label.text(),
-                "Expenses": self.expenses
-            }
+            # Prepare report data
+            report_data = [
+                f"Current Month Spend: {self.monthly_spent_label.text()}",
+                f"Highest Day of Spending: {self.highest_day_label.text()}",
+                "Expenses:"
+            ]
+        
+        # Add expense details
+            for expense in self.expenses:
+                expense_line = f"  - Description: {expense['description']}, Amount: {expense['amount']}, Category: {expense['category']}"
+                report_data.append(expense_line)
+            
+            # Join the report data into a single text string
+            report_text = "\n".join(report_data)
+            
+            # Write the report to the file
             with open(file_name, 'w') as file:
-                json.dump(report_data, file, indent=4)
+                file.write(report_text)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
