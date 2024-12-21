@@ -3,10 +3,9 @@ import json
 from functools import partial
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget,
-    QTableWidgetItem, QComboBox, QHeaderView, QFileDialog, QLineEdit, QHBoxLayout
-)
+    QTableWidgetItem, QComboBox, QHeaderView, QFileDialog, QLineEdit, QHBoxLayout)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont , QIcon
 from datetime import datetime
 from collections import defaultdict
 from redirect import ExpenseTracker
@@ -16,6 +15,7 @@ class ExpenseTracker(QMainWindow):
         super().__init__()
         # Initialize your UI setup here
         self.setWindowTitle("Expense Tracker")
+        self.setWindowIcon(QIcon("C:/Users/TM/Desktop/logo.ico"))
 
         # Initialize currency symbol and budget limit
         self.currency_symbol = "$"  # Default currency is USD
