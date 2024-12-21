@@ -366,5 +366,5 @@ if __name__ == "__main__":
     ui = Ui_MainWindow(expense_tracker)
     ui.ExpenseTracker = expense_tracker
     ui.setupUi(MainWindow)
-    MainWindow.show()
+    MainWindow.showMaximized()
     sys.exit(app.exec_())
