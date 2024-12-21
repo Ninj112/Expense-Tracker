@@ -50,7 +50,7 @@ class ExpenseTracker(QMainWindow):
         amount = 0  # this is just temporary variable to calculate the sum
         for array in self.expenses:
             amount += array[1]
-
+        self.total_amount = amount
         self.total_label = QLabel(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
         self.total_label.setAlignment(Qt.AlignCenter)
         total_font = QFont("Arial", 22, QFont.Bold)
@@ -189,12 +189,15 @@ class ExpenseTracker(QMainWindow):
         # self.expense_table.setEnabled(False)
 
     def remove_expense(self, row):
-
         del self.expenses[row]  # Remove the expense from the data source
-
-        del self.expenses[row]
+        amount = 0  # this is just temporary variable to calculate the sum
+        for array in self.expenses:
+            amount += array[1]
+        self.total_amount = amount
+        self.total_label.setText(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
+        self.update_budget_status()
         self.refresh_table()
->>>>>>> 
+
 
     def refresh_table(self):
         self.expense_table.setRowCount(len(self.expenses))  # Update row count
@@ -308,5 +311,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = ExpenseTracker()
     main_window.show()
-    main_window.showFullScreen()
+    main_window.showMaximized()
     sys.exit(app.exec_())
