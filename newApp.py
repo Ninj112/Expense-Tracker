@@ -194,7 +194,7 @@ class ExpenseTracker(QMainWindow):
 
         del self.expenses[row]
         self.refresh_table()
->>>>>>> 
+
 
     def refresh_table(self):
         self.expense_table.setRowCount(len(self.expenses))  # Update row count
