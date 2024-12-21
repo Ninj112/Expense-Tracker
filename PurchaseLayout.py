@@ -340,8 +340,7 @@ class Ui_MainWindow(object):
 
    
     def return_to_tracker(self):
-        self.expense_tracker.show()
-        # Show the Expense Tracker window
+        self.expense_tracker.show()  # Show the Expense Tracker window
         QtWidgets.QApplication.activeWindow().close()  # Close the current Add Purchase window
 
 
@@ -366,5 +365,4 @@ if __name__ == "__main__":
     ui.ExpenseTracker = expense_tracker
     ui.setupUi(MainWindow)
     MainWindow.show()
-    MainWindow.showFullScreen()
     sys.exit(app.exec_())
