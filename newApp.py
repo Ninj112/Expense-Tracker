@@ -178,11 +178,11 @@ class ExpenseTracker(QMainWindow):
             self.expense_table.setItem(row, 0, QTableWidgetItem(expense[0]))
             self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense[2])))
             self.expense_table.setItem(row, 2, QTableWidgetItem(expense[3]))
-            
             remove_button = QPushButton("Remove")
-    # Connect the button to a method, passing the row index
             remove_button.clicked.connect(partial(self.remove_expense, row))
+            self.expense_table.setCellWidget(row, 3, remove_button)
         self.layout.addWidget(self.expense_table)
+        # self.expense_table.setEnabled(False)
 
     def remove_expense(self, row):
         del self.expenses[row]  # Remove the expense from the data source
@@ -217,14 +217,6 @@ class ExpenseTracker(QMainWindow):
         self.add_button.clicked.connect(self.openExpenseAdd)  # Placeholder functionality
         self.layout.addWidget(self.add_button)
 
-    def openExpenseAdd(self):
-        # Open the purchase layout
-        self.purchase = QMainWindow()
-        self.ui = Ui_MainWindow(self)
-        self.ui.setupUi(self.purchase)
-        self.purchase.show()
-        self.hide()
-
     def create_view_report_button(self):
         # Create button to open the report page
         self.view_report_button = QPushButton("View Report")
@@ -243,21 +235,6 @@ class ExpenseTracker(QMainWindow):
         """)
         self.view_report_button.clicked.connect(self.open_report)
         self.layout.addWidget(self.view_report_button)
-
-    def open_report(self):
-        # Fetch data for the report page
-        print("Hello world")
-        current_month_total, highest_day, last_month_total = self.calculate_report_data()
-        print(current_month_total)
-        print(highest_day)
-        print(last_month_total)
-        # Open report window and pass self as the main window
-        self.report_window = Report.ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
-        self.report_window.show()
-        self.hide()  # Hide the current window (Expense Tracker) when opening the report page
-        print("Bye World")
-
-
 
     def update_currency(self):
         # Update currency symbol and total display
@@ -287,6 +264,7 @@ class ExpenseTracker(QMainWindow):
         return current_month_total, highest_day, last_month_total
 
 
+
     def load_expenses(self):
         expenses = SavedData.load_data()
         userDataList = SavedData.load_user_data()
@@ -295,6 +273,25 @@ class ExpenseTracker(QMainWindow):
         self.total_amount = 0
         self.budget_limit = userDataList[2]
         return expenses, self.total_amount
+
+    def open_report(self):
+        current_month_total, highest_day, last_month_total = self.calculate_report_data()
+        print(current_month_total)
+        print(highest_day)
+        print(last_month_total)
+
+        self.report_window = Report.ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
+        self.report_window.show()
+        self.hide()
+
+
+    def openExpenseAdd(self):
+        # Open the purchase layout
+        self.purchase = QMainWindow()
+        self.ui = Ui_MainWindow(self)
+        self.ui.setupUi(self.purchase)
+        self.purchase.show()
+        self.hide()
 
 # ------------------------------------
 
