@@ -11,6 +11,7 @@ from collections import defaultdict
 from redirect import ExpenseTracker
 from PurchaseLayout import Ui_MainWindow
 import Report
+import SavedData
 
 
 class ExpenseTracker(QMainWindow):
@@ -174,9 +175,9 @@ class ExpenseTracker(QMainWindow):
 
         # Populate table with the expenses
         for row, expense in enumerate(self.expenses):
-            self.expense_table.setItem(row, 0, QTableWidgetItem(expense['description']))
-            self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense['amount'])))
-            self.expense_table.setItem(row, 2, QTableWidgetItem(expense['category']))
+            self.expense_table.setItem(row, 0, QTableWidgetItem(expense[0]))
+            self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense[2])))
+            self.expense_table.setItem(row, 2, QTableWidgetItem(expense[3]))
             
             remove_button = QPushButton("Remove")
     # Connect the button to a method, passing the row index
@@ -245,12 +246,16 @@ class ExpenseTracker(QMainWindow):
 
     def open_report(self):
         # Fetch data for the report page
+        print("Hello world")
         current_month_total, highest_day, last_month_total = self.calculate_report_data()
-
+        print(current_month_total)
+        print(highest_day)
+        print(last_month_total)
         # Open report window and pass self as the main window
         self.report_window = Report.ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
         self.report_window.show()
         self.hide()  # Hide the current window (Expense Tracker) when opening the report page
+        print("Bye World")
 
 
 
@@ -276,37 +281,20 @@ class ExpenseTracker(QMainWindow):
         # Calculate highest spending day
         daily_totals = defaultdict(float)
         for expense in self.expenses:
-            daily_totals[expense['date']] += expense['amount']
+            daily_totals[expense[3]] += expense[1]
 
         highest_day = max(daily_totals, key=daily_totals.get, default="N/A")
         return current_month_total, highest_day, last_month_total
 
-    def save_expenses(self):
-        data = {
-            "currency_symbol": self.currency_symbol,
-            "total_amount": self.total_amount,
-            "expenses": self.expenses,
-            "budget_limit": self.budget_limit
-        }
-
-        # Open the file for writing and save data in JSON format
-        with open('expenses.json', 'w') as file:
-            json.dump(data, file, indent=4)
 
     def load_expenses(self):
-        try:
-            # Attempt to load data from the saved JSON file
-            with open('expenses.json', 'r') as file:
-                data = json.load(file)
-                self.currency_symbol = data.get("currency_symbol", "$")
-                self.total_amount = data.get("total_amount", 0.00)
-                self.budget_limit = data.get("budget_limit", 0.00)
-                expenses = data.get("expenses", [])
-                return expenses, self.total_amount
-        except (FileNotFoundError, json.JSONDecodeError):
-            # If file doesn't exist or there's an error loading, return default values
-            return [], 0.00
+        expenses = SavedData.load_data()
+        userDataList = SavedData.load_user_data()
+        self.currency_symbol = "$"
 
+        self.total_amount = 0
+        self.budget_limit = userDataList[2]
+        return expenses, self.total_amount
 
 # ------------------------------------
 

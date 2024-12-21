@@ -1,16 +1,30 @@
 import json
 import os
 
-# File name to store the JSON data
 FILENAME = 'data.json'
+USERFILE = "UserData.json"
 
-# Function to save the array to a JSON file
+def save_user_data(data, filename=USERFILE):
+    with open(filename, 'w') as file:
+        json.dump(data, file, indent=4)
+    print("User Data saved successfully.")
+
+
+def load_user_data(filename=USERFILE):
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            return json.load(file)
+    else:
+        print("File not found. Returning an empty array.")
+        return []
+
+
 def save_data(data, filename=FILENAME):
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
     print("Data saved successfully.")
 
-# Function to load the array from a JSON file
+
 def load_data(filename=FILENAME):
     if os.path.exists(filename):
         with open(filename, 'r') as file:

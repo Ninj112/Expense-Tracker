@@ -10,6 +10,7 @@ from datetime import datetime
 from collections import defaultdict
 from redirect import ExpenseTracker
 from PurchaseLayout import Ui_MainWindow
+import newApp
 
 class ReportPage(QMainWindow):
     def __init__(self, current_month_spent, highest_day, last_month_spent, expenses, currency_symbol, main_window):
