@@ -2,6 +2,7 @@ import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
 from redirect import ExpenseTracker, Ui_MainWindow
+import newApp
 
 class Ui_MainWindow(object):
     def __init__(self, expense_tracker):
@@ -340,7 +341,9 @@ class Ui_MainWindow(object):
 
    
     def return_to_tracker(self):
-        self.expense_tracker.show()  # Show the Expense Tracker window
+
+        self.expense_tracker.show()
+        newApp.ExpenseTracker.refresh_table()
         QtWidgets.QApplication.activeWindow().close()  # Close the current Add Purchase window
 
 

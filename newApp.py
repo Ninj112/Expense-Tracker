@@ -46,8 +46,12 @@ class ExpenseTracker(QMainWindow):
         self.create_view_report_button()
 
     def create_total_section(self):
-        # Total spend label
-        self.total_label = QLabel(f"Total Spend\n{self.currency_symbol}{self.total_amount:.2f}")
+
+        amount = 0  # this is just temporary variable to calculate the sum
+        for array in self.expenses:
+            amount += array[1]
+
+        self.total_label = QLabel(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
         self.total_label.setAlignment(Qt.AlignCenter)
         total_font = QFont("Arial", 22, QFont.Bold)
         self.total_label.setFont(total_font)
@@ -185,15 +189,15 @@ class ExpenseTracker(QMainWindow):
         # self.expense_table.setEnabled(False)
 
     def remove_expense(self, row):
-        del self.expenses[row]  # Remove the expense from the data source
-        self.populate_table()   # Refresh the table
+        del self.expenses[row]
+        self.refresh_table()
 
     def refresh_table(self):
         self.expense_table.setRowCount(len(self.expenses))  # Update row count
         for row, expense in enumerate(self.expenses):
-            self.expense_table.setItem(row, 0, QTableWidgetItem(expense['description']))
-            self.expense_table.setItem(row, 1, QTableWidgetItem(f"{self.currency_symbol}{expense['amount']:.2f}"))
-            self.expense_table.setItem(row, 2, QTableWidgetItem(expense['category']))
+            self.expense_table.setItem(row, 0, QTableWidgetItem(expense[0]))
+            self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense[2])))
+            self.expense_table.setItem(row, 2, QTableWidgetItem(expense[3]))
 
 
     def create_add_expense_section(self):
