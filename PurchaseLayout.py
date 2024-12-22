@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
    
     def return_to_tracker(self):
         self.expense_tracker = ExpenseTracker()  # Create a new instance of ExpenseTracker
-        self.expense_tracker.show()             # Show the main Expense Tracker window
+        self.expense_tracker.showMaximized()             # Show the main Expense Tracker window
         QtWidgets.QApplication.activeWindow().close()  # Close the current window
     # Close the current Add Purchase window
 

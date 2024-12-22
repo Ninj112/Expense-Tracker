@@ -1,12 +1,10 @@
 import sys
-import json
 from functools import partial
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget,
     QTableWidgetItem, QComboBox, QHeaderView, QFileDialog, QLineEdit, QHBoxLayout)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont , QIcon
-from datetime import datetime
 from collections import defaultdict
 import Report
 import SavedData
@@ -314,7 +312,7 @@ class ExpenseTracker(QMainWindow):
         print(last_month_total)
 
         self.report_window = Report.ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
-        self.report_window.show()
+        self.report_window.showMaximized()
         self.hide()
 
 
@@ -324,7 +322,7 @@ class ExpenseTracker(QMainWindow):
         self.purchase = QMainWindow()
         self.ui = Ui_MainWindow(self)
         self.ui.setupUi(self.purchase)
-        self.purchase.show()
+        self.purchase.showMaximized()
         self.close()
 
 # ------------------------------------
@@ -333,5 +331,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = ExpenseTracker()
     main_window.show()
-    main_window.showFullScreen()
+    main_window.showMaximized()
     sys.exit(app.exec_())

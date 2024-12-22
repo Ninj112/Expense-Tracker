@@ -1,6 +1,4 @@
-import sys
 import json
-from functools import partial
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QPushButton, QTableWidget,
     QTableWidgetItem, QComboBox, QHeaderView, QFileDialog, QLineEdit, QHBoxLayout
@@ -70,7 +68,7 @@ class ReportPage(QMainWindow):
         self.layout.addWidget(self.return_button)
 
     def return_to_tracker(self):
-        self.main_window.show()
+        self.main_window.showMaximized()
         self.close()
 
     def download_report(self):
