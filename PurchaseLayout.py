@@ -2,6 +2,7 @@ import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
 from newApp import ExpenseTracker
+from PyQt5.QtCore import QDate
 
 class Ui_MainWindow(object):
     def __init__(self, expense_tracker):
@@ -138,7 +139,7 @@ class Ui_MainWindow(object):
         self.PriceandCurrencyLayout = QtWidgets.QHBoxLayout()
         self.PriceandCurrencyLayout.setContentsMargins(30, -1, 30, 10)
         self.PriceandCurrencyLayout.setObjectName("PriceandCurrencyLayout")
-        self.PriceBox = QtWidgets.QSpinBox(self.centralwidget)
+        self.PriceBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -248,6 +249,7 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         font.setBold(True)
         font.setWeight(75)
+        
 
         # Done Button
         self.DoneButton.setFont(font)
