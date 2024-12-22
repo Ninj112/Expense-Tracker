@@ -291,7 +291,7 @@ class ExpenseTracker(QMainWindow):
         print(highest_day)
         print(last_month_total)
 
-        self.report_window = Report.ReportPage(current_month_total, highest_day, last_month_total, self.expenses, self.currency_symbol, self)
+        self.report_window = Report.ReportPage(current_month_total, highest_day, self.expenses, self.currency_symbol, self)
         self.report_window.showMaximized()
         self.hide()
 

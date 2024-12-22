@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import SavedData
-from newApp import ExpenseTracker
+from Main import ExpenseTracker
 
 
 class Ui_MainWindow(object):

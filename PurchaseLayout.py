@@ -3,7 +3,7 @@ from PyQt5.QtCore import QDateTime, QDate, QTime
 import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
-from newApp import ExpenseTracker
+from Main import ExpenseTracker
 
 class Ui_MainWindow(object):
     def __init__(self, expense_tracker):
