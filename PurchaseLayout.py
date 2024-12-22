@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QDateTime, QDate, QTime
+
 import SavedData
 from PyQt5 import QtCore, QtGui, QtWidgets
 from sympy.integrals.meijerint_doc import category
@@ -138,7 +140,8 @@ class Ui_MainWindow(object):
         self.PriceandCurrencyLayout = QtWidgets.QHBoxLayout()
         self.PriceandCurrencyLayout.setContentsMargins(30, -1, 30, 10)
         self.PriceandCurrencyLayout.setObjectName("PriceandCurrencyLayout")
-        self.PriceBox = QtWidgets.QSpinBox(self.centralwidget)
+
+        self.PriceBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -213,6 +216,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(16)
         self.DateBox.setFont(font)
+        self.DateBox.setMinimumDateTime(QDateTime(QDate(2024, 12, 22), QTime(0, 0, 0)))
         self.DateBox.setStyleSheet("padding-left: 10px")
         self.DateBox.setObjectName("DateBox")
         self.DateandTimeLayout.addWidget(self.DateBox)
