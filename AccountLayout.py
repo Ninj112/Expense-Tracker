@@ -145,6 +145,7 @@ class Ui_MainWindow(object):
         self.BudgetandCurrencyLayout = QtWidgets.QHBoxLayout()
         self.BudgetandCurrencyLayout.setContentsMargins(30, -1, 30, 10)
         self.BudgetandCurrencyLayout.setObjectName("BudgetandCurrencyLayout")
+
         self.BudgetBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.BudgetBox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
