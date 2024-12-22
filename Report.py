@@ -7,25 +7,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from datetime import datetime
 from collections import defaultdict
+import SavedData
 
-# Mock SavedData Module for Demo
-class SavedData:
-    @staticmethod
-    def load_data():
-        return [
-            ["Groceries", 100.0, "Food", "2024-12-01"],
-            ["Rent", 1200.0, "Housing", "2024-12-01"],
-            ["Utilities", 200.0, "Bills", "2024-12-02"]
-        ]
-
-    @staticmethod
-    def save_data(expenses):
-        with open("expenses.json", "w") as f:
-            json.dump(expenses, f)
 
 # Report Page Class
 class ReportPage(QMainWindow):
-    def __init__(self, current_month_spent, highest_day, last_month_spent, expenses, currency_symbol, main_window):
+    def __init__(self, current_month_spent, highest_day, expenses, currency_symbol, main_window):
         super().__init__()
         self.expenses = expenses
         self.currency_symbol = currency_symbol
@@ -37,8 +24,11 @@ class ReportPage(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
 
+        userData = SavedData.load_user_data()
+        userName = userData[0]
+        userEmail = userData[1]
         # Title
-        self.title_label = QLabel("Expense Report")
+        self.title_label = QLabel("Expense Report for " + userName + "(" + userEmail +")")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setFont(QFont("Arial", 24, QFont.Bold))
         self.layout.addWidget(self.title_label)
