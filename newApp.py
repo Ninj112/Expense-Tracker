@@ -112,13 +112,12 @@ class ExpenseTracker(QMainWindow):
         self.update_budget_status()
 
     def set_budget_limit(self):
-        try:
-            self.budget_limit = float(self.budget_input.text())
-            self.update_budget_status()
-        except ValueError:
-            self.budget_status_label.setText("Invalid budget amount.")
-            self.budget_status_label.setStyleSheet("color: red;")
-
+        from PurchaseLayout import Ui_MainWindow
+        self.purchase = QMainWindow()
+        self.ui = Ui_MainWindow(self)
+        self.ui.setupUi(self.purchase)
+        self.purchase.showMaximized()
+        self.close()
     def update_budget_status(self):
         if self.budget_limit > 0:
             remaining_budget = self.budget_limit - self.total_amount
