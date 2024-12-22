@@ -112,11 +112,11 @@ class ExpenseTracker(QMainWindow):
         self.update_budget_status()
 
     def set_budget_limit(self):
-        from PurchaseLayout import Ui_MainWindow
-        self.purchase = QMainWindow()
-        self.ui = Ui_MainWindow(self)
-        self.ui.setupUi(self.purchase)
-        self.purchase.showMaximized()
+        from AccountLayout import Ui_MainWindow
+        self.Account = QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.Account)
+        self.Account.showMaximized()
         self.close()
     def update_budget_status(self):
         if self.budget_limit > 0:

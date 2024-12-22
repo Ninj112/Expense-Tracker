@@ -420,7 +420,7 @@ class Ui_MainWindow(object):
             self.ThemeTitle.setStyleSheet("color: rgb(120, 120, 120);")
             self.RadioGroup.setStyleSheet("color: black;")
         else:
-            MainWindow.setStyleSheet("background-color: rgb(23, 22, 45);")
+            self.MainWindow.setStyleSheet("background-color: rgb(23, 22, 45);")
             self.HeadTitle.setStyleSheet("color: rgb(255, 255, 255);")
             self.NameBox.setStyleSheet("color: white; background-color: rgb(47, 47, 140); border-radius: 10px;")
             self.EmailBox.setStyleSheet("color: white; background-color: rgb(47, 47, 140); border-radius: 10px;")
