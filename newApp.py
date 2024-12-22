@@ -8,8 +8,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont , QIcon
 from datetime import datetime
 from collections import defaultdict
-from redirect import ExpenseTracker
-from PurchaseLayout import Ui_MainWindow
 import Report
 import SavedData
 
@@ -46,22 +44,28 @@ class ExpenseTracker(QMainWindow):
         self.create_view_report_button()
 
     def create_total_section(self):
+            # Calculate the total amount spent
+            # amount = sum(float(expense[1]) for expense in self.expenses if isinstance(expense[1], (int, float, str)) and str(expense[1]).replace('.', '', 1).isdigit())
+            amount = 0 
+            for array in self.expenses:
+                amount += array[1]
 
-        amount = 0  # this is just temporary variable to calculate the sum
-        for array in self.expenses:
-            amount += array[1]
-        self.total_amount = amount
-        self.total_label = QLabel(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
-        self.total_label.setAlignment(Qt.AlignCenter)
-        total_font = QFont("Arial", 22, QFont.Bold)
-        self.total_label.setFont(total_font)
-        self.total_label.setStyleSheet("""
-            background-color: #1E90FF;
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-        """)
-        self.layout.addWidget(self.total_label)
+            # Save the calculated total amount
+            self.total_amount = amount
+
+            # Create and style the total label
+            self.total_label = QLabel(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
+            self.total_label.setAlignment(Qt.AlignCenter)
+            total_font = QFont("Arial", 22, QFont.Bold)
+            self.total_label.setFont(total_font)
+            self.total_label.setStyleSheet("""
+                background-color: #1E90FF;
+                color: white;
+                padding: 20px;
+                border-radius: 15px;
+            """)
+            self.layout.addWidget(self.total_label)
+
 
     def create_budget_section(self):
         # Budget layout
@@ -155,7 +159,7 @@ class ExpenseTracker(QMainWindow):
         self.layout.addWidget(self.recent_purchases_label)
 
         # Create table for recent purchases
-        self.expense_table = QTableWidget(len(self.expenses), 4)  # 3 columns: Description, Amount, Category
+        self.expense_table = QTableWidget(len(self.expenses), 4)  # 4 columns: Description, Amount, Category, Action
         self.expense_table.setHorizontalHeaderLabels(["Description", "Amount", "Category", "Action"])
 
         # Customize headers
@@ -179,24 +183,41 @@ class ExpenseTracker(QMainWindow):
 
         # Populate table with the expenses
         for row, expense in enumerate(self.expenses):
-            self.expense_table.setItem(row, 0, QTableWidgetItem(expense[0]))
-            self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense[2])))
-            self.expense_table.setItem(row, 2, QTableWidgetItem(expense[3]))
+            self.expense_table.setItem(row, 0, QTableWidgetItem(str(expense[0])))  # Description
+            self.expense_table.setItem(row, 1, QTableWidgetItem(str(expense[1])))  # Amount
+            self.expense_table.setItem(row, 2, QTableWidgetItem(str(expense[3])))  # Category
+            
+            # Add remove button
             remove_button = QPushButton("Remove")
             remove_button.clicked.connect(partial(self.remove_expense, row))
             self.expense_table.setCellWidget(row, 3, remove_button)
+
         self.layout.addWidget(self.expense_table)
-        # self.expense_table.setEnabled(False)
+
 
     def remove_expense(self, row):
-        del self.expenses[row]  # Remove the expense from the data source
-        amount = 0  # this is just temporary variable to calculate the sum
-        for array in self.expenses:
-            amount += array[1]
-        self.total_amount = amount
-        self.total_label.setText(f"Total Spend\n{self.currency_symbol}{amount:.2f}")
-        self.update_budget_status()
-        self.refresh_table()
+        
+        
+        if 0 <= row < len(self.expenses):
+            del self.expenses[row]  # Remove from in-memory list
+            
+            amount = 0 
+            for array in self.expenses:
+                amount += array[1]
+        
+
+            # Save the calculated total amount
+            self.total_amount = amount
+            
+            self.total_label.setText((f"Total Spend\n{self.currency_symbol}{amount:.2f}"))
+            
+            
+            self.update_budget_status()
+            # Save updated expenses to the file
+            SavedData.save_data(self.expenses)
+            
+            # Refresh the table to reflect the updated data
+            self.refresh_table()
 
 
     def refresh_table(self):
@@ -298,12 +319,13 @@ class ExpenseTracker(QMainWindow):
 
 
     def openExpenseAdd(self):
-        # Open the purchase layout
+        # Local import to avoid circular dependency
+        from PurchaseLayout import Ui_MainWindow
         self.purchase = QMainWindow()
         self.ui = Ui_MainWindow(self)
         self.ui.setupUi(self.purchase)
         self.purchase.show()
-        self.hide()
+        self.close()
 
 # ------------------------------------
 
@@ -311,5 +333,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = ExpenseTracker()
     main_window.show()
-    main_window.showMaximized()
+    main_window.showFullScreen()
     sys.exit(app.exec_())
