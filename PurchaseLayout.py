@@ -9,10 +9,6 @@ class Ui_MainWindow(object):
         self.expense_tracker = expense_tracker
 
     def setupUi(self, MainWindow):
-        # Your setup code here
-        pass
-
-    def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(731, 494)
         MainWindow.setWindowOpacity(1.0)
@@ -340,9 +336,9 @@ class Ui_MainWindow(object):
 
    
     def return_to_tracker(self):
-        self.expense_tracker = ExpenseTracker()  # Create a new instance of ExpenseTracker
-        self.expense_tracker.showMaximized()             # Show the main Expense Tracker window
-        QtWidgets.QApplication.activeWindow().close()  # Close the current window
+        self.expense_tracker = ExpenseTracker()
+        self.expense_tracker.showMaximized()
+        QtWidgets.QApplication.activeWindow().close()
     # Close the current Add Purchase window
 
 

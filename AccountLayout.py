@@ -1,9 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import SavedData
+from newApp import ExpenseTracker
 
 
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1080)
@@ -134,7 +136,7 @@ class Ui_MainWindow(object):
         font.setPointSize(18)
         font.setBold(True)
         font.setWeight(75)
-        # Hello
+
         self.CurrencyTitle.setFont(font)
         self.CurrencyTitle.setStyleSheet("color: rgb(117, 117, 117);")
         self.CurrencyTitle.setObjectName("CurrencyTitle")
@@ -381,6 +383,10 @@ class Ui_MainWindow(object):
             dataList[4] = False
         SavedData.save_user_data(dataList)
 
+        self.expense_tracker = ExpenseTracker()
+        self.expense_tracker.showMaximized()
+        self.centralwidget.close()
+
     def enableWidgets(self):
         self.NameBox.setEnabled(True)
         self.EmailBox.setEnabled(True)
@@ -399,11 +405,11 @@ class Ui_MainWindow(object):
     def setTheme(self, check):
 
         if check:
-            MainWindow.setStyleSheet("background-color: rgb(240, 240, 240);")
+            self.centralwidget.setStyleSheet("background-color: rgb(240, 240, 240);")
             self.NameBox.setStyleSheet("background-color: rgb(255, 255, 255);")
             self.EmailBox.setStyleSheet("background-color: rgb(255, 255, 255);")
             self.BudgetBox.setStyleSheet("background-color: rgb(255, 255, 255);")
-            self.CurrencyBox.setStyleSheet("background-color: rgb(255, 255, 255);" 
+            self.CurrencyBox.setStyleSheet("background-color: rgb(255, 255, 255);"
                 "border: 3px solid  rgb(104, 104, 147);"
                 "border-radius: 10px;"
                 "QComboBox::drop-down {\n"
@@ -420,7 +426,7 @@ class Ui_MainWindow(object):
             self.ThemeTitle.setStyleSheet("color: rgb(120, 120, 120);")
             self.RadioGroup.setStyleSheet("color: black;")
         else:
-            self.MainWindow.setStyleSheet("background-color: rgb(23, 22, 45);")
+            self.centralwidget.setStyleSheet("background-color: rgb(23, 22, 45);")
             self.HeadTitle.setStyleSheet("color: rgb(255, 255, 255);")
             self.NameBox.setStyleSheet("color: white; background-color: rgb(47, 47, 140); border-radius: 10px;")
             self.EmailBox.setStyleSheet("color: white; background-color: rgb(47, 47, 140); border-radius: 10px;")
@@ -433,10 +439,6 @@ class Ui_MainWindow(object):
             self.CurrencyTitle.setStyleSheet("color: rgb(220, 220, 220);")
             self.ThemeTitle.setStyleSheet("color: rgb(220, 220, 220);")
             self.RadioGroup.setStyleSheet("color: white;")
-
-
-
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -461,6 +463,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
