@@ -385,7 +385,7 @@ class Ui_MainWindow(object):
 
         self.expense_tracker = ExpenseTracker()
         self.expense_tracker.showMaximized()
-        self.centralwidget.close()
+        QtWidgets.QApplication.activeWindow().close()
 
     def enableWidgets(self):
         self.NameBox.setEnabled(True)

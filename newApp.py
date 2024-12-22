@@ -68,23 +68,11 @@ class ExpenseTracker(QMainWindow):
     def create_budget_section(self):
         # Budget layout
         budget_layout = QHBoxLayout()
-
-        # Budget input
-        self.budget_input = QLineEdit()
-        self.budget_input.setPlaceholderText("Set Budget Limit")
-        self.budget_input.setFont(QFont("Arial", 14))
-        self.budget_input.setStyleSheet("""
-            QLineEdit {
-                border: 2px solid #87CEEB;
-                border-radius: 10px;
-                padding: 8px;
-                font-size: 14px;
-            }
-        """)
-        budget_layout.addWidget(self.budget_input)
+        UserData = SavedData.load_user_data()
+        userName= UserData[0]
 
         # Set Budget button
-        self.set_budget_button = QPushButton("Set Budget")
+        self.set_budget_button = QPushButton("Hello " + userName)
         self.set_budget_button.setFont(QFont("Arial", 14))
         self.set_budget_button.setStyleSheet("""
             QPushButton {
@@ -267,7 +255,10 @@ class ExpenseTracker(QMainWindow):
         self.layout.addWidget(self.view_report_button)
 
     def update_currency(self):
-        # Update currency symbol and total display
+
+        userData = SavedData.load_user_data()
+        userData = userData[3]
+        
         currency_text = self.currency_selector.currentText()
         if "USD" in currency_text:
             self.currency_symbol = "$"
